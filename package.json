@@ -1,0 +1,17 @@
+{
+  "name": "dwebsocket",
+  "description": "",
+  "version": "1.0.0",
+  "homepage": "http://github.com/dnode/dwebsocket",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "main": "src/lib.js",
+  "dependencies": {
+    "basic-auth": "^1.0.4",
+    "ws": "^1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dnode/dwebsocket.git"
+  }
+}
