@@ -2,7 +2,7 @@
 
 let count = 0;
 
-module.exports = [
+module.exports = (intervall) => [
   ['connected', () => {
     if (count) {
       console.log(`successfull reconnect to the server (count: ${count})`);
@@ -12,6 +12,6 @@ module.exports = [
   ['disconnect', (client) => {
     ++count;
     console.log(`try to reconnect to the server (count: ${count})`);
-    setTimeout(() => { client.connect(); }, 1000);
+    setTimeout(() => { client.connect(); }, intervall || 1000);
   }]
 ];
