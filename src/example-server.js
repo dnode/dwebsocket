@@ -1,12 +1,12 @@
 'use strict';
 
-const Server = require('./server.js');
+const dwebsocket = require('./lib.js').Server;
 
-const server = new Server()
-  .plugin(require('./plugins/authenticate')((user, pass) => {
+const server = new dwebsocket.Server()
+  .plugin(dwebsocket.plugins.authenticate((user, pass) => {
     return user === 'sharaal' && pass === 'sharaal';
   }))
-  .plugin(require('./plugins/example-console.log.js'))
+  .plugin(require('./server/plugins/example-console.log.js'))
   .connect();
 
 server.on('example', (client, data) => {
