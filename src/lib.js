@@ -1,6 +1,16 @@
 'use strict';
 
 module.exports = {
-  Client: require('client/client.js'),
-  Server: require('server/server.js')
+  Client: {
+    Client: require('./client/client.js'),
+    plugins: {
+      authenticate: require('./client/plugins/authenticate.js')
+    }
+  },
+  Server: {
+    Server: require('./server/server.js'),
+    plugins: {
+      authenticate: require('./server/plugins/authenticate.js')
+    }
+  }
 };
