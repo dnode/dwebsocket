@@ -39,7 +39,7 @@ class Client {
     for (const hook of this.hooks.get('connect') || []) {
       hook(options);
     }
-    this.ws = WebSocket(`ws://${process.env.HOST || this.host || 'localhost'}:${process.env.PORT || this.port}`, null, options);
+    this.ws = WebSocket(`ws://${process.env.HOST || this.host || '127.0.0.1'}:${process.env.PORT || this.port || 80}`, null, options);
     this.ws.on('close', () => {
       for (const hook of this.hooks.get('disconnect') || []) {
         hook(this);

@@ -6,7 +6,7 @@ const server = new Server()
   .plugin(require('./plugins/authenticate')((user, pass) => {
     return user === 'sharaal' && pass === 'sharaal';
   }))
-  .plugin(require('./plugins/console.log.js'))
+  .plugin(require('./plugins/example-console.log.js'))
   .connect();
 
 server.on('example', (client, data) => {
