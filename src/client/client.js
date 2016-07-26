@@ -58,9 +58,9 @@ class Client {
     this.ws.on('message', (message, flags) => {
       try {
         message = JSON.parse(message);
-        this.trigger('message', { message, flags });
+        this.trigger('message', { flags, message });
         for (const handler of this.handlers.get(message[0]) || []) {
-          handler(message[1], flags, this);
+          handler(message[1]);
         }
       } catch(e) {}
     });
@@ -73,7 +73,7 @@ class Client {
   emit(event, data) {
     let message = [event, data];
     const send = () => {
-      this.trigger('client.emit', [message]);
+      this.trigger('client.emit', { message });
       message = JSON.stringify(message);
       this.ws.send(message);
     }

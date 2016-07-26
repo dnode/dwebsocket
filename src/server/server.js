@@ -64,10 +64,10 @@ class Server {
         ws
       };
       this.trigger('connection', { client });
-      ws.on('message', message => {
+      ws.on('message', (message, flags) => {
         try {
           message = JSON.parse(message);
-          this.trigger('message', { client, message });
+          this.trigger('message', { client, flags, message });
           for (const handler of this.handlers.get(message[0]) || []) {
             handler(client, message[1]);
           }
