@@ -8,7 +8,7 @@ const server = new dwebsocket.Server()
   }))
   .plugin(dwebsocket.rooms)
   .plugin(require('./server/example-console.log.js'))
-  .connect(process.env.PORT);
+  .listen(process.env.PORT);
 
 server.on('example', (client, data) => {
   console.log(`"example" messsage received (user: ${client.user})`, data);

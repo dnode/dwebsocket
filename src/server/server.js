@@ -39,7 +39,7 @@ class Server {
     return this;
   }
 
-  connect(port, options) {
+  listen(port, options) {
     if (typeof port === 'object') {
       options = port;
     } else {
