@@ -3,10 +3,10 @@
 const dwebsocket = require('./lib.js').Server;
 
 const server = new dwebsocket.Server()
-  .plugin(dwebsocket.plugins.authenticate((user, pass) => {
+  .plugin(dwebsocket.authenticate((user, pass) => {
     return user === 'sharaal' && pass === 'sharaal';
   }))
-  .plugin(require('./server/plugins/example-console.log.js'))
+  .plugin(require('./server/example-console.log.js'))
   .connect();
 
 server.on('example', (client, data) => {
