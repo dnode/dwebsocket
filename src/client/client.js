@@ -78,7 +78,7 @@ class Client {
       this.trigger('client.emit', { message });
       message = JSON.stringify(message);
       this.ws.send(message);
-    }
+    };
     if (this.ws.readyState === WebSocket.OPEN) {
       send();
     } else {
