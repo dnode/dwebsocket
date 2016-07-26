@@ -3,7 +3,7 @@
 const dwebsocket = require('./lib.js').Server;
 
 const server = new dwebsocket.Server()
-  .plugin(dwebsocket.authenticate((user, pass) => {
+  .plugin(dwebsocket['basic-auth']((user, pass) => {
     return user === 'sharaal' && pass === 'sharaal';
   }))
   .plugin(dwebsocket.rooms)
