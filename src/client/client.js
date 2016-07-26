@@ -40,6 +40,12 @@ class Client {
   }
 
   connect(url, options) {
+    if (Number.parseInt(url)) {
+      url = { port: url };
+    }
+    if (typeof url == 'object') {
+      url = `ws://${url.host || '127.0.0.1'}:${url.port}`;
+    }
     options = options || {};
     this.trigger('connect', { url, options });
     this.ws = new WebSocket(url, options);
