@@ -39,8 +39,15 @@ class Server {
     return this;
   }
 
-  connect(options) {
-    options = options || {};
+  connect(port, options) {
+    if (typeof port === 'object') {
+      options = port;
+    } else {
+      options = options || {};
+      if (port) {
+        options.port = port;
+      }
+    }
     this.trigger('connect', { options });
     this.wss = new WebSocket.Server(options);
     this.wss.on('connection', ws => {
