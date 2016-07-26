@@ -24,43 +24,10 @@ class Server {
     return this;
   }
 
-  setPort(port) {
-    this.port = port;
-    return this;
-  }
-
-  connect() {
-    this.wss = WebSocket.Server({ port: process.env.PORT || this.port });
-    this.wss.on('connection', ws => {
-      const client = {};
-      for (const hook of this.hooks.get('connect') || []) {
-        hook(client, ws);
-      }
-      if (ws.readyState === WebSocket.CLOSED) {
-        return;
-      }
-      for (const hook of this.hooks.get('connected') || []) {
-        hook(client);
-      }
-      client.emit = (event, data) => {
-        const message = JSON.stringify([event, data]);
-        for (const hook of this.hooks.get('client.emit') || []) {
-          hook(client, message);
-        }
-        ws.send(message);
-      };
-      ws.on('message', message => {
-        try {
-          message = JSON.parse(message);
-          for (const hook of this.hooks.get('on') || []) {
-            hook(client, message);
-          }
-          for (const handler of this.handlers.get(message[0]) || []) {
-            handler(client, message[1]);
-          }
-        } catch(e) {}
-      });
-    });
+  trigger(type, data) {
+    for (const hook of this.hooks.get(type) || []) {
+      hook(data, this);
+    }
     return this;
   }
 
@@ -72,11 +39,41 @@ class Server {
     return this;
   }
 
+  connect(options) {
+    options = options || {};
+    this.trigger('connect', { options });
+    this.wss = new WebSocket.Server(options);
+    this.wss.on('connection', ws => {
+      if (ws.readyState === WebSocket.CLOSED) {
+        return;
+      }
+      const client = {
+        emit: (event, data) => {
+          let message = [event, data];
+          this.trigger('client.emit', { client, message });
+          message = JSON.stringify(message);
+          ws.send(message);
+        },
+        ws
+      };
+      this.trigger('connection', { client });
+      ws.on('message', message => {
+        try {
+          message = JSON.parse(message);
+          this.trigger('message', { client, message });
+          for (const handler of this.handlers.get(message[0]) || []) {
+            handler(client, message[1]);
+          }
+        } catch(e) {}
+      });
+    });
+    return this;
+  }
+
   emit(event, data) {
-    const message = JSON.stringify([event, data]);
-    for (const hook of this.hooks.get('server.emit') || []) {
-      hook(message);
-    }
+    let message = [event, data];
+    this.trigger('server.emit', { message });
+    message = JSON.stringify(message);
     for (const client of this.wss.clients) {
       client.send(message);
     }

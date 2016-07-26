@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = [
-  ['connected', (client, ws) => { console.log(`client connected (user: ${client.user})`); }],
-  ['client.emit', (client, message) => { console.log(`outgoing client message (user: ${client.user})`, message) }],
-  ['server.emit', message => { console.log('outgoing server message', message) }],
-  ['on', (client, message) => { console.log(`incoming message (user: ${client.user})`, message) }]
+  ['connection', data => { console.log(`client connected (user: ${data.client.user})`); }],
+  ['client.emit', data => { console.log(`outgoing client message (user: ${data.client.user})`, data.message) }],
+  ['server.emit', data => { console.log('outgoing server message', data.message) }],
+  ['message', data => { console.log(`incoming message (user: ${data.client.user})`, data.message) }]
 ];

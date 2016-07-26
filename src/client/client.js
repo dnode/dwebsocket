@@ -24,48 +24,10 @@ class Client {
     return this;
   }
 
-  setHost(host) {
-    this.host = host;
-    return this;
-  }
-
-  setPort(port) {
-    this.port = port;
-    return this;
-  }
-
-  connect() {
-    const options = {};
-    for (const hook of this.hooks.get('connect') || []) {
-      hook(options);
+  trigger(type, data) {
+    for (const hook of this.hooks.get(type) || []) {
+      hook(data, this);
     }
-    this.ws = WebSocket(`ws://${process.env.HOST || this.host || '127.0.0.1'}:${process.env.PORT || this.port || 80}`, null, options);
-    this.ws.on('close', () => {
-      for (const hook of this.hooks.get('disconnect') || []) {
-        hook(this);
-      }
-    });
-    this.ws.on('error', () => {
-      for (const hook of this.hooks.get('error') || []) {
-        hook(this);
-      }
-    });
-    this.ws.on('message', message => {
-      try {
-        message = JSON.parse(message);
-        for (const hook of this.hooks.get('on') || []) {
-          hook(message);
-        }
-        for (const handler of this.handlers.get(message[0]) || []) {
-          handler(message[1]);
-        }
-      } catch(e) {}
-    });
-    this.ws.on('open', () => {
-      for (const hook of this.hooks.get('connected') || []) {
-        hook(this);
-      }
-    });
     return this;
   }
 
@@ -77,18 +39,42 @@ class Client {
     return this;
   }
 
+  connect(url, options) {
+    options = options || {};
+    this.trigger('connect', { url, options });
+    this.ws = new WebSocket(url, options);
+    this.ws.on('close', () => {
+      this.trigger('close');
+    });
+    this.ws.on('error', () => {
+      this.trigger('error');
+    });
+    this.ws.on('message', (message, flags) => {
+      try {
+        message = JSON.parse(message);
+        this.trigger('message', { message, flags });
+        for (const handler of this.handlers.get(message[0]) || []) {
+          handler(message[1], flags, this);
+        }
+      } catch(e) {}
+    });
+    this.ws.on('open', () => {
+      this.trigger('open');
+    });
+    return this;
+  }
+
   emit(event, data) {
-    const message = JSON.stringify([event, data]);
+    let message = [event, data];
     const send = () => {
-      for (const hook of this.hooks.get('client.emit') || []) {
-        hook(message);
-      }
+      this.trigger('client.emit', [message]);
+      message = JSON.stringify(message);
       this.ws.send(message);
     }
     if (this.ws.readyState === WebSocket.OPEN) {
       send();
     } else {
-      this.ws.on('open', send);
+      this.ws.once('open', send);
     }
     return this;
   }

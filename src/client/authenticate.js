@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = (user, pass) => [
-  ['connect', options => {
+  ['connect', data => {
     const authorization = `Basic ${new Buffer(`${user}:${pass}`).toString('base64')}`;
-    options.headers = { authorization };
+    data.options.headers = { authorization };
   }]
 ];

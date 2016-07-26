@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = [
+  ['client.emit', data => { console.log('outgoing client message', data.message) }],
+  ['close', () => { console.log('server disconnected'); }],
   ['connect', () => { console.log('try connect server'); }],
-  ['connected', () => { console.log('server connected'); }],
-  ['disconnect', () => { console.log('server disconnected'); }],
-  ['client.emit', message => { console.log('outgoing client message', message) }],
-  ['on', message => { console.log('incoming message', message) }]
+  ['message', data => { console.log('incoming message', data.message) }],
+  ['open', () => { console.log('server connected'); }],
 ];
