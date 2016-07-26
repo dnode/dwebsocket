@@ -67,11 +67,13 @@ class Server {
       ws.on('message', (message, flags) => {
         try {
           message = JSON.parse(message);
-          this.trigger('message', { client, flags, message });
-          for (const handler of this.handlers.get(message[0]) || []) {
-            handler(client, message[1]);
-          }
-        } catch(e) {}
+        } catch(e) {
+          return;
+        }
+        this.trigger('message', { client, flags, message });
+        for (const handler of this.handlers.get(message[0]) || []) {
+          handler(client, message[1]);
+        }
       });
     });
     return this;
